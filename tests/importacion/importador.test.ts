@@ -122,7 +122,7 @@ describe('segunda importación con pagos nuevos', () => {
       ['INV/2026/00006', 'Juan Pérez', usd(1200)],
     ]);
     expect(plan.paraRevisar.map((r) => [r.numero, r.detalle])).toEqual([
-      ['INV/2026/00005', 'Monto distinto: Odoo $850.00, registrado $800.00.'],
+      ['INV/2026/00005', 'Monto distinto: archivo $850.00, registrado $800.00.'],
     ]);
     expect(plan.omitidas.map((o) => o.numero)).toEqual(['RINV/2026/00001']);
     expect(plan.resumen).toEqual({ facturasNuevas: 2, pagosNuevos: 4, montoPagosNuevos: usd(4500), sinCambios: 1, omitidas: 1, paraRevisar: 1 });

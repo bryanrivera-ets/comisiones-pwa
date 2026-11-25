@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { readFileSync } from 'node:fs';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { RepositorioMemoria } from '../../src/datos/RepositorioMemoria';
 import { montar } from './montar';
@@ -103,7 +103,7 @@ describe('pantalla de importación', () => {
     expect(cifra('Facturas nuevas')).toBe('2');
     expect(cifra('Sin cambios')).toBe('1');
     expect(cifra('Para revisar')).toBe('1');
-    expect(screen.getByText('Monto distinto: Odoo $850.00, registrado $800.00.')).toBeTruthy();
+    expect(screen.getByText('Monto distinto: archivo $850.00, registrado $800.00.')).toBeTruthy();
 
     fireEvent.click(guardar());
     await screen.findByRole('heading', { name: 'Importación guardada' });
@@ -124,6 +124,36 @@ describe('pantalla de importación', () => {
     await waitFor(() => expect(cifra('Sin cambios')).toBe('4'));
     expect(screen.getByText('No hay nada nuevo que guardar.')).toBeTruthy();
     expect((screen.getByRole('button', { name: 'Guardar importación' }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it('descarga la plantilla de ventas, vacía o con las facturas abiertas', async () => {
+    const { leerArchivo } = await import('../../src/importacion/leerArchivo');
+    const descargas: { nombre: string; blob: Blob }[] = [];
+    let ultimoBlob: Blob | undefined;
+    URL.createObjectURL = vi.fn((b: Blob) => ((ultimoBlob = b), 'blob:prueba')) as typeof URL.createObjectURL;
+    URL.revokeObjectURL = vi.fn();
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {
+      descargas.push({ nombre: this.download, blob: ultimoBlob! });
+    });
+
+    const repo = await repoInicial();
+    await repo.guardarFactura({
+      id: 'f1', numero: 'F-1', cliente: 'X', vendedorId: 'juan', fecha: '2026-10-01', montoSinImpuestos: 100000, total: null, origen: 'manual',
+    });
+    montar('/facturas/importar', repo);
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Descargar plantilla' }));
+    fireEvent.click(screen.getByLabelText(/^Incluir las facturas abiertas \(1\)/));
+    fireEvent.click(screen.getByRole('button', { name: 'Descargar plantilla' }));
+    await waitFor(() => expect(descargas).toHaveLength(2));
+
+    expect(descargas[0]!.nombre).toMatch(/^plantilla-ventas-\d{4}-\d{2}-\d{2}\.xlsx$/);
+    const vacia = leerArchivo(await descargas[0]!.blob.arrayBuffer(), 'p.xlsx');
+    expect(vacia).toHaveLength(1);
+    expect(vacia[0]![0]).toBe('Número de factura');
+    const conAbiertas = leerArchivo(await descargas[1]!.blob.arrayBuffer(), 'p.xlsx');
+    expect(conAbiertas[1]!.slice(0, 3)).toEqual(['F-1', 'X', 'Juan Pérez']);
+    vi.restoreAllMocks();
   });
 
   it('un archivo que no es el reporte de Odoo lo dice claramente', async () => {

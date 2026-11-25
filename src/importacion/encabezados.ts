@@ -9,6 +9,7 @@ export const CAMPOS = [
   'montoSinImpuestos',
   'total',
   'adeudado',
+  'cobrado',
   'fechaPago',
   'estadoPago',
 ] as const;
@@ -28,6 +29,7 @@ export const NOMBRE_CAMPO: Record<Campo, string> = {
   montoSinImpuestos: 'Base imponible (sin impuestos)',
   total: 'Total',
   adeudado: 'Importe adeudado',
+  cobrado: 'Cobrado (sin impuestos)',
   fechaPago: 'Fecha de pago',
   estadoPago: 'Estado de pago',
 };
@@ -50,6 +52,11 @@ const SINONIMOS: Record<Campo, string[]> = {
   adeudado: [
     'importe adeudado', 'adeudado', 'amount due', 'saldo', 'saldo pendiente', 'importe pendiente', 'residual',
     'importe residual', 'pendiente', 'por cobrar', 'balance', 'due',
+  ],
+  // Lo cobrado acumulado, ya sin impuestos (lo usa la plantilla de ventas).
+  cobrado: [
+    'cobrado', 'cobrado sin impuestos', 'monto cobrado', 'importe cobrado', 'total cobrado', 'pagado sin impuestos',
+    'monto pagado', 'importe pagado', 'amount paid', 'paid amount',
   ],
   fechaPago: ['fecha de pago', 'fecha pago', 'payment date', 'fecha de cobro', 'fecha cobro', 'paid date', 'fecha del pago'],
   estadoPago: ['estado de pago', 'estado del pago', 'payment status', 'payment state', 'estado pago'],

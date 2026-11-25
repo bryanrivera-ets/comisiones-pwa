@@ -8,7 +8,7 @@ describe('detección de encabezados', () => {
       'Base imponible', 'Total', 'Importe adeudado', 'Fecha de pago', 'Estado de pago',
     ]);
     expect(mapeo).toEqual({
-      numero: 0, cliente: 1, vendedor: 2, fecha: 3, montoSinImpuestos: 5, total: 6, adeudado: 7, fechaPago: 8, estadoPago: 9,
+      numero: 0, cliente: 1, vendedor: 2, fecha: 3, montoSinImpuestos: 5, total: 6, adeudado: 7, cobrado: null, fechaPago: 8, estadoPago: 9,
     });
   });
 

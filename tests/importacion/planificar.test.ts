@@ -19,6 +19,7 @@ function fila(datos: Partial<FilaOdoo>): FilaOdoo {
     montoSinImpuestos: usd(1000),
     total: usd(1150),
     adeudado: null,
+    cobrado: null,
     fechaPago: null,
     fechaPagoIlegible: false,
     estadoPago: '',
@@ -134,13 +135,13 @@ describe('planificar: facturas que ya existen', () => {
 
   it('Odoo muestra menos pagado: a revisión, sin cambiar nada', () => {
     const plan = planificarImportacion([fila({ numero: 'INV/EXISTE', pagado: usd(300) })], actual, opciones());
-    expect(plan.paraRevisar.map((r) => r.detalle)).toEqual(['Odoo muestra menos pagado ($300.00) que lo registrado ($400.00).']);
+    expect(plan.paraRevisar.map((r) => r.detalle)).toEqual(['El archivo muestra menos pagado ($300.00) que lo registrado ($400.00).']);
     expect(plan.cambios!.pagosNuevos).toEqual([]);
   });
 
   it('monto distinto: a revisión', () => {
     const plan = planificarImportacion([fila({ numero: 'INV/EXISTE', montoSinImpuestos: usd(900), pagado: usd(900) })], actual, opciones());
-    expect(plan.paraRevisar.map((r) => r.detalle)).toEqual(['Monto distinto: Odoo $900.00, registrado $1,000.00.']);
+    expect(plan.paraRevisar.map((r) => r.detalle)).toEqual(['Monto distinto: archivo $900.00, registrado $1,000.00.']);
   });
 
   it('vendedor distinto: a revisión', () => {
@@ -150,7 +151,7 @@ describe('planificar: facturas que ya existen', () => {
       { ...actual, vendedores: [ana, beto] },
       opciones(),
     );
-    expect(plan.paraRevisar.map((r) => r.detalle)).toEqual(['Vendedor distinto: Odoo "Beto", registrado "Ana López".']);
+    expect(plan.paraRevisar.map((r) => r.detalle)).toEqual(['Vendedor distinto: archivo "Beto", registrado "Ana López".']);
   });
 
   it('el archivo no dice lo pagado: sin cambios', () => {

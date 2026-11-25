@@ -1,5 +1,5 @@
 /** Descarga un archivo generado en el navegador (enlace con `download`). */
-export function descargarArchivo(nombre: string, contenido: string, tipo: string): void {
+export function descargarArchivo(nombre: string, contenido: string | ArrayBuffer, tipo: string): void {
   const url = URL.createObjectURL(new Blob([contenido], { type: tipo }));
   const enlace = document.createElement('a');
   enlace.href = url;
@@ -22,7 +22,7 @@ export type ResultadoGuardar = 'compartido' | 'descargado' | 'cancelado';
  * la hoja de "Compartir" del sistema (Guardar en Archivos, AirDrop, correo…). En lo demás, descarga normal.
  * Llamar directamente desde el clic: el navegador exige que compartir venga de una acción del usuario.
  */
-export async function guardarArchivo(nombre: string, contenido: string, tipo: string): Promise<ResultadoGuardar> {
+export async function guardarArchivo(nombre: string, contenido: string | ArrayBuffer, tipo: string): Promise<ResultadoGuardar> {
   if (esIOS() && typeof navigator.canShare === 'function') {
     const archivo = new File([contenido], nombre, { type: tipo });
     if (navigator.canShare({ files: [archivo] })) {

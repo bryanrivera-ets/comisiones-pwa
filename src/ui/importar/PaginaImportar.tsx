@@ -16,6 +16,8 @@ import {
 import { EXTENSIONES_ACEPTADAS, leerArchivo, type Matriz } from '../../importacion/leerArchivo';
 import { normalizarFilas } from '../../importacion/normalizar';
 import { planificarImportacion, type PlanImportacion, type ResolucionVendedor } from '../../importacion/planificar';
+import { crearPlantilla, filasAbiertas, nombrePlantilla, TIPO_XLSX } from '../../importacion/plantilla';
+import { guardarArchivo } from '../componentes/descargar';
 import type { RegistroImportacion } from '../../datos/Repositorio';
 import { Campo as CampoFormulario, Cargando, EntradaDinero, ListaErrores } from '../componentes/comunes';
 import { useAccion } from '../componentes/useAccion';
@@ -68,6 +70,9 @@ export function PaginaImportar() {
   const [vendedorPorDefectoId, setVendedorPorDefectoId] = useState('');
   const [resoluciones, setResoluciones] = useState<Record<string, EstadoResolucion>>({});
   const [guardado, setGuardado] = useState<RegistroImportacion | null>(null);
+  const [incluirAbiertas, setIncluirAbiertas] = useState(false);
+
+  const facturasAbiertas = useMemo(() => (datos ? filasAbiertas(datos) : []), [datos]);
 
   const vendedores = useMemo(
     () => [...(datos?.vendedores ?? [])].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')),
@@ -121,6 +126,15 @@ export function PaginaImportar() {
       setMapeo(null);
       setErrorLectura(error instanceof Error ? error.message : String(error));
     }
+  }
+
+  function descargarPlantilla() {
+    // Sin esperas: en iPhone, compartir el archivo debe ocurrir dentro del mismo clic.
+    const contenido = crearPlantilla(
+      vendedores.map((v) => v.nombre),
+      incluirAbiertas ? facturasAbiertas : [],
+    );
+    void guardarArchivo(nombrePlantilla(hoyISO()), contenido, TIPO_XLSX);
   }
 
   function cambiarFilaEncabezados(numeroFila: number) {
@@ -210,6 +224,26 @@ export function PaginaImportar() {
           )}
         </label>
         {errorLectura && <ListaErrores errores={[errorLectura]} />}
+
+        <div className="plantilla">
+          <h3>¿Ventas fuera de Odoo o prefieres llenarlas a mano?</h3>
+          <p className="campo-ayuda">
+            Descarga la plantilla de Excel, llénala (trae una hoja de instrucciones) y súbela aquí mismo. En «Cobrado» va lo pagado
+            hasta hoy, acumulado: puedes volver a subir el mismo archivo cuando lleguen más cobros.
+          </p>
+          <label className="opcion">
+            <input type="checkbox" checked={incluirAbiertas} onChange={(e) => setIncluirAbiertas(e.target.checked)} />
+            <span>
+              Incluir las facturas abiertas ({facturasAbiertas.length})
+              <small className="campo-ayuda">Para anotar sus cobros sin volver a escribirlas.</small>
+            </span>
+          </label>
+          <div className="acciones acciones-izquierda">
+            <button className="boton" onClick={descargarPlantilla}>
+              Descargar plantilla
+            </button>
+          </div>
+        </div>
       </div>
 
       {archivo && mapeo && (
@@ -218,7 +252,7 @@ export function PaginaImportar() {
             <h2>2. Columnas</h2>
             <p className="campo-ayuda">
               Revisa que cada dato salga de la columna correcta. Obligatorias: número, fecha de factura y base imponible.
-              Lo pagado se calcula con Total e Importe adeudado; si no hay adeudado, con Estado de pago.
+              Lo pagado sale de «Cobrado» (plantilla); si no hay, de Total e Importe adeudado; si tampoco, de Estado de pago.
             </p>
             <CampoFormulario etiqueta="Fila de encabezados">
               <input

@@ -124,6 +124,29 @@ Detalles:
 - **Fechas en texto:** se aceptan `AAAA-MM-DD`, `MM/DD/AAAA` y `DD/MM/AAAA`. Si alguna fecha de una columna empieza
   con un número mayor de 12, toda esa columna se lee como `DD/MM/AAAA`.
 
+### Plantilla de ventas (sin Odoo o a mano)
+
+En **Facturas → Importar Excel de Odoo**, el botón **Descargar plantilla** baja un Excel con dos hojas: **Ventas**,
+la que se llena, e **Instrucciones**, que trae la lista de vendedores registrados y un ejemplo. Se sube por el mismo
+importador.
+
+| Columna | Qué escribir |
+|---|---|
+| Número de factura | Obligatorio. Identifica la factura; al volver a subirla se actualiza en vez de duplicarse. |
+| Cliente | Opcional. |
+| Vendedor | Nombre del vendedor en la app (o uno de sus alias). |
+| Fecha de factura | Obligatorio. Fecha de Excel o `AAAA-MM-DD`. |
+| Monto sin impuestos | Obligatorio. Base de la comisión. |
+| Total con impuestos | Opcional. |
+| Cobrado sin impuestos | Lo pagado **hasta hoy, acumulado**. Vacío si no ha pagado nada. |
+| Fecha de cobro | Fecha del último cobro. Vacía = la fecha escogida al importar. |
+
+- **Cobrado es el acumulado, no el pago nuevo.** Al volver a subir el archivo, la app registra solo la diferencia
+  con la fecha de cobro. Si alguien escribe un monto menor a lo ya registrado, la fila queda *para revisar* y no se
+  cambia nada.
+- Con la casilla **Incluir las facturas abiertas**, la plantilla sale con las facturas pendientes ya escritas y su
+  cobrado actual: solo hay que actualizar *Cobrado* y *Fecha de cobro* y volver a subirla.
+
 ### 3. Facturas y pagos
 
 Alta manual de facturas, registro y eliminación de pagos (con la casilla de *cobro previo*), y filtros por vendedor,

@@ -17,6 +17,7 @@ export interface FilaOdoo {
   montoSinImpuestos: Centavos | null;
   total: Centavos | null;
   adeudado: Centavos | null;
+  cobrado: Centavos | null;
   fechaPago: FechaISO | null;
   /** Había algo en la columna de fecha de pago, pero no se entiende. */
   fechaPagoIlegible: boolean;
@@ -45,6 +46,7 @@ function vacio(valor: unknown): boolean {
 
 /**
  * Lo pagado en la base sin impuestos:
+ * - con columna Cobrado (sin impuestos, acumulado): ese monto;
  * - con columna de adeudado: base × (total − adeudado) / total; sin columna Total, base − adeudado;
  * - si no, con Estado de pago: "Pagado" (o "En proceso de pago") = todo; lo demás = nada;
  * - si no hay ninguna de las dos, null (no se sabe).
@@ -55,12 +57,16 @@ export function calcularPagado(
   total: Centavos | null,
   adeudado: Centavos | null,
   estadoPago: string,
+  cobrado: Centavos | null = null,
 ): { pagado: Centavos | null; aviso: string | null } {
   if (base === null || base <= 0) return { pagado: null, aviso: null };
   let pagado: number | null = null;
   let aviso: string | null = null;
 
-  if (adeudado !== null) {
+  if (cobrado !== null) {
+    pagado = cobrado;
+    if (cobrado > base + 1) aviso = 'Lo cobrado es mayor que el monto sin impuestos: se toma como pagada por completo.';
+  } else if (adeudado !== null) {
     pagado = total !== null && total > 0 ? proporcion(base, total - adeudado, total) : base - adeudado;
   } else if (estadoPago !== '') {
     const estado = normalizarNombre(estadoPago);
@@ -107,10 +113,11 @@ export function normalizarFilas(matriz: Matriz, filaEncabezados: number, mapeo: 
     const montoSinImpuestos = parsearDinero(celda(fila, mapeo.montoSinImpuestos));
     const total = parsearDinero(celda(fila, mapeo.total));
     const adeudado = parsearDinero(celda(fila, mapeo.adeudado));
+    const cobrado = parsearDinero(celda(fila, mapeo.cobrado));
     const estadoPago = texto(celda(fila, mapeo.estadoPago));
     const valorFechaPago = celda(fila, mapeo.fechaPago);
     const fechaPago = vacio(valorFechaPago) ? null : parsearFecha(valorFechaPago, ordenFechaPago);
-    const { pagado, aviso } = calcularPagado(montoSinImpuestos, total, adeudado, estadoPago);
+    const { pagado, aviso } = calcularPagado(montoSinImpuestos, total, adeudado, estadoPago, cobrado);
 
     filas.push({
       filaExcel: i + 1,
@@ -122,6 +129,7 @@ export function normalizarFilas(matriz: Matriz, filaEncabezados: number, mapeo: 
       montoSinImpuestos,
       total,
       adeudado,
+      cobrado,
       fechaPago,
       fechaPagoIlegible: !vacio(valorFechaPago) && fechaPago === null,
       estadoPago,

@@ -216,14 +216,14 @@ export function planificarImportacion(
         plan.paraRevisar.push(
           informe(
             fila,
-            `Monto distinto: Odoo ${formatearUSD(fila.montoSinImpuestos)}, registrado ${formatearUSD(existente.montoSinImpuestos)}.`,
+            `Monto distinto: archivo ${formatearUSD(fila.montoSinImpuestos)}, registrado ${formatearUSD(existente.montoSinImpuestos)}.`,
           ),
         );
         continue;
       }
       if (fila.vendedor !== '' && vendedor.id !== existente.vendedorId) {
         const registrado = vendedoresPorId.get(existente.vendedorId)?.nombre ?? '—';
-        plan.paraRevisar.push(informe(fila, `Vendedor distinto: Odoo "${fila.vendedor}", registrado "${registrado}".`));
+        plan.paraRevisar.push(informe(fila, `Vendedor distinto: archivo "${fila.vendedor}", registrado "${registrado}".`));
         continue;
       }
       if (fila.pagado === null) {
@@ -234,7 +234,7 @@ export function planificarImportacion(
       const diferencia = fila.pagado - registrado;
       if (diferencia < -TOLERANCIA) {
         plan.paraRevisar.push(
-          informe(fila, `Odoo muestra menos pagado (${formatearUSD(fila.pagado)}) que lo registrado (${formatearUSD(registrado)}).`),
+          informe(fila, `El archivo muestra menos pagado (${formatearUSD(fila.pagado)}) que lo registrado (${formatearUSD(registrado)}).`),
         );
         continue;
       }

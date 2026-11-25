@@ -669,6 +669,19 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
+.plantilla {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-borde);
+}
+
+.plantilla h3 {
+  margin: 0;
+}
+
 .entrada-numero {
   max-width: 110px;
 }
