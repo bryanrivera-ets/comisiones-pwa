@@ -14,6 +14,8 @@ export default defineConfig({
         short_name: 'Comisiones',
         description: 'Cálculo de comisiones trimestrales a partir de las facturas de Odoo.',
         lang: 'es',
+        // Identidad fija de la app instalada (aunque cambie start_url).
+        id: '/',
         start_url: '.',
         scope: '.',
         display: 'standalone',

@@ -64,6 +64,25 @@ Cuando publiques una versión nueva, la app abierta muestra **"Hay una versión 
 > La app se instala por dirección: si cambias de dominio, el navegador la trata como otra app con **otros datos**.
 > Antes de mudarte de dirección, exporta un respaldo y restáuralo en la nueva.
 
+## Cómo instalarla en la computadora
+
+Con **Chrome** o **Edge** (Windows, Mac o Linux), abre la dirección publicada:
+
+1. Pulsa el botón **⬇ Instalar app** en la barra verde de arriba, a la derecha. También sirve el ícono de instalar
+   (pantalla con flecha) al final de la barra de direcciones, o el menú **⋮ → Transmitir, guardar y compartir →
+   Instalar página como aplicación** (Chrome) / **… → Aplicaciones → Instalar este sitio como aplicación** (Edge).
+2. Confirma con **Instalar**. La app se abre en su propia ventana, con acceso directo en el escritorio o el menú
+   Inicio (en Windows puedes anclarla a la barra de tareas) y en el Launchpad o Aplicaciones (en Mac).
+
+En **Safari para Mac** (macOS Sonoma o más reciente): **Archivo → Agregar al Dock**. **Firefox** no instala
+aplicaciones web: usa Chrome o Edge.
+
+El botón *Instalar app* solo aparece cuando el navegador lo permite. No aparece si la app ya está instalada, si se abre
+en Firefox o Safari, o si la página no está en HTTPS (o `localhost`).
+
+Para desinstalarla, en la ventana de la app abre el menú **⋮ → Desinstalar**. Antes, exporta un respaldo: al
+desinstalar, el navegador puede ofrecer borrar también los datos.
+
 ## Cómo instalarla en el celular
 
 Abre la dirección publicada (HTTPS) en el navegador del celular:
@@ -73,8 +92,6 @@ Abre la dirección publicada (HTTPS) en el navegador del celular:
 - **iPhone / iPad (Safari):** botón **Compartir** (cuadro con flecha) → **Agregar a pantalla de inicio** → *Agregar*.
   En iPhone, instálala: Safari puede borrar los datos de sitios que no se abren en varias semanas, pero no los de las apps
   instaladas.
-- **Computadora (Chrome / Edge):** ícono de instalar en la barra de direcciones, o menú → *Instalar Comisiones*.
-
 Después de abrirla una vez con internet, funciona sin conexión. Arriba aparece *Sin conexión* cuando no hay red.
 
 En iPhone, al exportar el CSV o el respaldo se abre la hoja de **Compartir**: escoge *Guardar en Archivos*, correo,

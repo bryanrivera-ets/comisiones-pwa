@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { instalar, useInstalacion } from './instalacion';
 import { AvisoRespaldo } from './respaldo/AvisoRespaldo';
 import { useEnLinea } from './useEnLinea';
 
@@ -11,12 +12,20 @@ const SECCIONES = [
 
 export function Layout() {
   const enLinea = useEnLinea();
+  const instalacion = useInstalacion();
   return (
     <div className="marco">
       <header className="barra-superior">
         <img src="/logo.svg" alt="" width={28} height={28} />
         <span className="titulo-app">Comisiones</span>
-        {!enLinea && <span className="etiqueta-sin-conexion">Sin conexión</span>}
+        <div className="barra-superior-derecha">
+          {!enLinea && <span className="etiqueta-sin-conexion">Sin conexión</span>}
+          {instalacion.disponible && !instalacion.instalada && (
+            <button className="boton-instalar" onClick={() => void instalar()} title="Instalar la app en este dispositivo">
+              ⬇ Instalar app
+            </button>
+          )}
+        </div>
       </header>
       <nav className="navegacion" aria-label="Secciones">
         {SECCIONES.map((s) => (
