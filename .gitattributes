@@ -1,0 +1,8 @@
+# Fin de línea LF en el repositorio, igual en Windows, macOS y Linux (Netlify/Vercel).
+* text=auto eol=lf
+
+# Excel de ejemplo: binarios, nunca se convierten.
+*.xlsx binary
+*.xls binary
+*.png binary
+*.ico binary
